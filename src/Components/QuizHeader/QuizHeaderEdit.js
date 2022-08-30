@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import TextField from "@mui/material/TextField";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
@@ -31,8 +31,8 @@ function QuizHeaderEdit({
     maxQuestions,
     maxAttempts,
     duration,
-    createdBy,
-    modifiedBy,
+    spoc,
+    mailTo,
   } = data;
 
   const editChange = (e) => {
@@ -43,6 +43,28 @@ function QuizHeaderEdit({
   const editChangeDate = (date) => {
     setData({ ...data, startDate: date, endDate: date });
   };
+
+  const editChangeCompany = (e) => {
+    const { value, name } = e.target;
+    setData({ ...data, companyId: value });
+  };
+
+  const [teacherBycomp, setteacherBycomp] = useState([]);
+
+  const onChangeCompanyId = () => {
+    axios
+      .get(`http://localhost:8090/teacher/getByCompanyId/${companyId}`)
+      .then((res) => {
+        setteacherBycomp(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    onChangeCompanyId();
+
+    return () => {};
+  }, [open, companyId]);
 
   const [dateError, setDateError] = useState("");
   const setendDate = (date) => {
@@ -76,6 +98,8 @@ function QuizHeaderEdit({
       maxQuestions: data.maxQuestions,
       maxAttempts: data.maxAttempts,
       duration: data.duration,
+      spoc: data.spoc,
+      mailTo: data.mailTo,
       createdBy: userId,
       modifiedBy: userId,
       startDate: moment(startDate).format("MM-DD-YYYY"),
@@ -122,7 +146,7 @@ function QuizHeaderEdit({
                 className="formtext"
                 variant="outlined"
                 placeholder="Company Id"
-                onChange={(e) => editChange(e)}
+                onChange={(e) => editChangeCompany(e)}
                 required
               >
                 {company.map((val) => (
@@ -278,6 +302,46 @@ function QuizHeaderEdit({
                 variant="outlined"
                 onChange={(e) => editChange(e)}
               />
+            </Grid>
+
+            <Grid item xs={8} md={6} lg={4}>
+              <TextField
+                select
+                fullWidth
+                name="spoc"
+                value={spoc}
+                label="spoc"
+                margin="dense"
+                className="formtext"
+                variant="outlined"
+                placeholder="SPOC"
+                onChange={(e) => editChange(e)}
+                required
+              >
+                {teacherBycomp.map((val) => (
+                  <MenuItem value={val.id}>
+                    {" "}
+                    {val.id}-{val.teacherName}
+                  </MenuItem>
+                ))}
+              </TextField>
+            </Grid>
+            <Grid item xs={8} md={6} lg={4}>
+              <TextField
+                select
+                placeholder="Mail To"
+                name="mailTo"
+                value={mailTo}
+                label="mailTo "
+                margin="dense"
+                className="formtext"
+                fullWidth
+                variant="outlined"
+                onChange={(e) => editChange(e)}
+              >
+                <MenuItem value={"Teacher"}>Teacher</MenuItem>
+                <MenuItem value={"Student"}>Student</MenuItem>
+              </TextField>
             </Grid>
           </Grid>
         </Box>

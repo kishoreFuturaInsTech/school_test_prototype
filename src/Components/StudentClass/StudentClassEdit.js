@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Modal from "react-bootstrap/Modal";
 import { TextField, FormControl, Grid, Box } from "@mui/material";
@@ -7,7 +8,7 @@ import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 
-import "../Css/ContentInfo.css";
+import "../Css/ContentAdd.css";
 
 export default function CompanyAdd({
   open,
@@ -15,9 +16,10 @@ export default function CompanyAdd({
   data,
   companyData,
   groupData,
-  userData,
   onChange,
+  userData,
   handleFormSubmit,
+  setData,
 }) {
   let {
     userId,
@@ -28,6 +30,67 @@ export default function CompanyAdd({
     groupId,
     companyId,
   } = data;
+  const [studentClassData, setstudentClassData] = useState([]);
+
+  const editChangeCompanyId = (e) => {
+    const { value, name } = e.target;
+    setData({ ...data, companyId: value });
+  };
+
+  const onChangeCompanyId = () => {
+    axios
+      .get(
+        `http://localhost:8090/studentGrade/getAllByCompanyId/${companyId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+        }
+      )
+      .then((resp) => {
+        setstudentClassData(resp.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const [sectionData, setsectionData] = useState([]);
+  const onChangeClass = () => {
+    axios
+      .get(
+        `http://localhost:8090/section/getAllByStudentGrade/${studentClass}`,
+        {
+          headers: {
+            Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+          },
+        }
+      )
+      .then((resp) => {
+        setsectionData(resp.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const [rankData, setrankData] = useState([]);
+  const onChangeSection = () => {
+    axios
+      .get(`http://localhost:8090/ranks/getAllBySection/${section}`, {
+        headers: {
+          Authorization: `Bearer ${sessionStorage.getItem("token")}`,
+        },
+      })
+      .then((resp) => {
+        setrankData(resp.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    onChangeCompanyId();
+    onChangeClass();
+    onChangeSection();
+
+    return () => {};
+  }, [open, companyId, studentClass, section]);
 
   return (
     <div>
@@ -81,59 +144,18 @@ export default function CompanyAdd({
                     margin="dense"
                   />
                 </Grid>
-                <Grid item xs={8} md={6} lg={4}>
-                  <TextField
-                    label="Student Class"
-                    className="formtext"
-                    id="studentClass"
-                    value={studentClass}
-                    placeholder="Student Class"
-                    name="studentClass"
-                    onChange={(e) => onChange(e)}
-                    fullWidth
-                    variant="outlined"
-                    margin="dense"
-                  />
-                </Grid>
 
                 <Grid item xs={8} md={6} lg={4}>
                   <TextField
-                    label="Section"
-                    className="formtext"
-                    id="section"
-                    value={section}
-                    placeholder="Section"
-                    name="section"
-                    onChange={(e) => onChange(e)}
-                    fullWidth
-                    variant="outlined"
-                    margin="dense"
-                  />
-                </Grid>
-                <Grid item xs={8} md={6} lg={4}>
-                  <TextField
-                    label="Ranks"
-                    className="formtext"
-                    id="ranks"
-                    value={ranks}
-                    placeholder="Ranks"
-                    name="ranks"
-                    onChange={(e) => onChange(e)}
-                    fullWidth
-                    variant="outlined"
-                    margin="dense"
-                  />
-                </Grid>
-                <Grid item xs={8} md={6} lg={4}>
-                  <TextField
                     select
+                    inputProps={{ readOnly: true }}
                     label="Company"
                     className="formtext"
                     id="companyId"
                     value={companyId}
                     placeholder="Company"
                     name="companyId"
-                    onChange={(e) => onChange(e)}
+                    onChange={(e) => editChangeCompanyId(e)}
                     fullWidth
                     variant="outlined"
                     margin="dense"
@@ -145,6 +167,72 @@ export default function CompanyAdd({
                     ))}
                   </TextField>
                 </Grid>
+
+                <Grid item xs={8} md={6} lg={4}>
+                  <TextField
+                    select
+                    label="Student Class"
+                    className="formtext"
+                    id="studentClass"
+                    value={studentClass}
+                    placeholder="Student Class"
+                    name="studentClass"
+                    onChange={(e) => onChange(e)}
+                    fullWidth
+                    variant="outlined"
+                    margin="dense"
+                  >
+                    {studentClassData.map((val) => (
+                      <MenuItem value={val.shortDescription}>
+                        {val.shortDescription}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+
+                <Grid item xs={8} md={6} lg={4}>
+                  <TextField
+                    select
+                    label="Section"
+                    className="formtext"
+                    id="section"
+                    value={section}
+                    placeholder="Section"
+                    name="section"
+                    onChange={(e) => onChange(e)}
+                    fullWidth
+                    variant="outlined"
+                    margin="dense"
+                  >
+                    {sectionData.map((val) => (
+                      <MenuItem value={val.shortDescription}>
+                        {val.shortDescription}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+                <Grid item xs={8} md={6} lg={4}>
+                  <TextField
+                    select
+                    label="Rank"
+                    className="formtext"
+                    id="ranks"
+                    value={ranks}
+                    placeholder="Rank"
+                    name="ranks"
+                    onChange={(e) => onChange(e)}
+                    fullWidth
+                    variant="outlined"
+                    margin="dense"
+                  >
+                    {rankData.map((val) => (
+                      <MenuItem value={val.rankHolder}>
+                        {val.rankHolder}
+                      </MenuItem>
+                    ))}
+                  </TextField>
+                </Grid>
+
                 <Grid item xs={8} md={6} lg={4}>
                   <TextField
                     select

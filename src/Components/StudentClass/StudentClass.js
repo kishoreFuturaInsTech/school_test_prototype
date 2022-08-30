@@ -230,6 +230,7 @@ function StudentClass() {
           companyId: record.companyId,
           createdBy: userId,
           modifiedBy: userId,
+          userId: record.userId,
         },
         {
           headers: {
