@@ -31,6 +31,7 @@ import ResponsiveAppBar from "./Components/AppBar/ResponsiveAppBar";
 import Sidebar from "./Components/Sidebar/Sidebar";
 import { CssBaseline } from "@mui/material";
 import "./App.css";
+import RichTextEditor from "./Components/reactQuill/RichTextEditor";
 
 function App() {
   const { pathname } = useLocation();
@@ -73,6 +74,7 @@ function App() {
           <Route exact path="/section" element={<Section />} />
           <Route exact path="/rank" element={<Rank />} />
           <Route exact path="/studentGrade" element={<StudentGrade />} />
+          <Route exact path="/richtext" element={<RichTextEditor />} />
         </Routes>
       </ContextProvider>
     </div>

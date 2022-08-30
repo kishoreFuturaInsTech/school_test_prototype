@@ -58,6 +58,9 @@ function QuizHeaderAdd({
   const [modifiedBy, setModifiedBy] = useState("");
   const [dateError, setDateError] = useState("");
 
+  const [spoc, setSPOC] = useState("");
+  const [mailTo, setmailTo] = useState("");
+
   const id = sessionStorage.getItem("userId");
 
   const setendDate = (date) => {
@@ -82,6 +85,18 @@ function QuizHeaderAdd({
       .catch((err) => console.log(err));
   };
 
+  const [teacherBycomp, setteacherBycomp] = useState([]);
+
+  const onChangeCompanyId = (value) => {
+    setCompanyId(value);
+    axios
+      .get(`http://localhost:8090/teacher/getByCompanyId/${value}`)
+      .then((res) => {
+        setteacherBycomp(res.data);
+      })
+      .catch((err) => console.log(err));
+  };
+
   const handleFormSubmit = () => {
     const startDate = moment(startdate).format("MM-DD-YYYY");
     const endDate = moment(enddate).format("MM-DD-YYYY");
@@ -97,6 +112,8 @@ function QuizHeaderAdd({
       maxAttempts,
       duration,
       // userId: userId,
+      spoc,
+      mailTo,
       createdBy: id,
       modifiedBy: id,
     };
@@ -134,7 +151,7 @@ function QuizHeaderAdd({
                 className="formtext"
                 variant="outlined"
                 placeholder="Company Id"
-                onChange={(e) => setCompanyId(e.target.value)}
+                onChange={(e) => onChangeCompanyId(e.target.value)}
                 required
               >
                 {company.map((val) => (
@@ -306,30 +323,44 @@ function QuizHeaderAdd({
                 onChange={(e) => setDuration(e.target.value)}
               />
             </Grid>
-            {/* <Grid item xs={8} md={6} lg={4}>
+            <Grid item xs={8} md={6} lg={4}>
               <TextField
-                placeholder="Created By"
-                name="createdBy"
-                label="Created By "
+                select
+                fullWidth
+                name="spoc"
+                label="spoc"
                 margin="dense"
                 className="formtext"
-                fullWidth
                 variant="outlined"
-                onChange={(e) => setCreatedBy(e.target.value)}
-              />
+                placeholder="SPOC"
+                onChange={(e) => setSPOC(e.target.value)}
+                required
+              >
+                {teacherBycomp.map((val) => (
+                  <MenuItem value={val.id}>
+                    {" "}
+                    {val.id}-{val.teacherName}
+                  </MenuItem>
+                ))}
+              </TextField>
             </Grid>
             <Grid item xs={8} md={6} lg={4}>
               <TextField
-                placeholder="Modified By"
-                name="modifiedBy"
-                label="Modified By "
+                select
+                fullWidth
+                name="mailTo"
+                label="mailTo"
                 margin="dense"
                 className="formtext"
-                fullWidth
                 variant="outlined"
-                onChange={(e) => setModifiedBy(e.target.value)}
-              />
-            </Grid> */}
+                placeholder="Mail To"
+                onChange={(e) => setmailTo(e.target.value)}
+                required
+              >
+                <MenuItem value={"Teacher"}>Teacher</MenuItem>
+                <MenuItem value={"Student"}>Student</MenuItem>
+              </TextField>
+            </Grid>
           </Grid>
         </Box>
       </form>

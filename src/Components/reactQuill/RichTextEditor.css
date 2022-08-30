@@ -1,0 +1,20 @@
+.editor, .preview {
+  
+    height: 100%;
+    width: 50%;
+}
+
+
+.preview {
+    margin-left: 10px;
+   
+    
+}
+
+.textareaC
+{
+    width: 100%;
+    
+}
+
+.rowC{display:flex; flex-direction:row;}
