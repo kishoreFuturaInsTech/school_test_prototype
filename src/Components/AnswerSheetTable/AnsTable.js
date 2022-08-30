@@ -18,7 +18,7 @@ import AnsTableAdd from "./AnsTableAdd";
 import AnsTableEdit from "./AnsTableEdit";
 import "../Css/Content.css";
 
-import ConfirmDialog from "../Dialogs/ConfirmDialog";
+import AddQuestions from "../Dialogs/AddQuestions";
 import Notification from "../Dialogs/Notification";
 import AnsTableInfo from "./AnsTableInfo";
 import InfoIcon from "@mui/icons-material/Info";
@@ -263,11 +263,15 @@ function AnsTable() {
       })
       .catch((err) => console.log(err));
   };
-  const editFormSubmit = () => {
+  const editFormSubmit = (id) => {
+    setConfirmDialog({
+      ...confirmDialog,
+      isOpen: false,
+    });
     axios
       .patch(
-        `http://localhost:8090/answersheet/update/${record.id}/${userId}`,
-        body,
+        `http://localhost:8090/answersheet/editQuestionsToUsers/${id}/${userId}`,
+        {},
         {
           headers: {
             Authorization: `Bearer ${sessionStorage.getItem("token")}`,
@@ -455,6 +459,24 @@ function AnsTable() {
                             <QuestionMarkIcon
                               color="primary"
                               style={{ cursor: "pointer", marginRight: 10 }}
+                              onClick={() => {
+                                setConfirmDialog({
+                                  isOpen: true,
+                                  title: `Are you sure you want to Add all Questions from ${value?.qheader?.quizName}?`,
+                                  subTitle: "You can't undo this operation",
+                                  onConfirm: () => {
+                                    editFormSubmit(value.id);
+                                  },
+                                });
+                              }}
+                            />
+                          ) : null}
+                          {access?.find(
+                            (element) => element === "addAll-questions"
+                          ) ? (
+                            <QuestionMarkIcon
+                              color="primary"
+                              style={{ cursor: "pointer", marginRight: 10 }}
                               onClick={() => editClickOpen(value)}
                             />
                           ) : null}
@@ -541,7 +563,7 @@ function AnsTable() {
         userGroupData={userGroupData}
       /> */}
       <Notification notify={notify} setNotify={setNotify} />
-      <ConfirmDialog
+      <AddQuestions
         confirmDialog={confirmDialog}
         setConfirmDialog={setConfirmDialog}
       />
