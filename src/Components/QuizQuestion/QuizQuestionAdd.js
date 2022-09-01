@@ -12,6 +12,7 @@ import Notification from "../Dialogs/Notification";
 
 function QuizQuestionAdd({
   open,
+  picture,
   handleClickClose,
   close,
   getdata,
@@ -23,6 +24,7 @@ function QuizQuestionAdd({
   open1,
   close1,
   headerId,
+  uploadImage,
 }) {
   const userId = sessionStorage.getItem("userId");
 
@@ -38,6 +40,7 @@ function QuizQuestionAdd({
       quizHeader,
       question,
       questionType,
+      picture,
       questionCategory,
       createdBy: userId,
       modifiedBy: userId,
@@ -141,6 +144,20 @@ function QuizQuestionAdd({
                 ))}
               </TextField>
             </Grid>
+            {questionType === 3 && (
+              <>
+                <Grid item xs={8} md={6} lg={4}>
+                  <div className="col" style={{ marginLeft: 23 }}>
+                    <label>
+                      {" "}
+                      <h5> Picture </h5>{" "}
+                    </label>
+                    <br /> <br />
+                    <input type="file" onChange={(e) => uploadImage(e)} />
+                  </div>
+                </Grid>
+              </>
+            )}
           </Grid>
         </Box>
       </form>

@@ -205,7 +205,17 @@ function AnswerSheet({ quizid, setIsAnswerSheet }) {
                 <ol>
                   <i>
                     {" "}
-                    <li value={index + 1}>{val.question}</li>
+                    <li value={index + 1}>
+                      <img
+                        style={{
+                          height: "5rem",
+                          width: "5rem",
+                        }}
+                        src={val?.picture}
+                      ></img>
+                      <br />
+                      {val.question}
+                    </li>
                   </i>
                 </ol>
               </h5>
