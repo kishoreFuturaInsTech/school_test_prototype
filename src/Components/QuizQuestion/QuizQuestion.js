@@ -62,6 +62,35 @@ function QuizQuestion() {
     subTitle: "",
   });
 
+  const [picture, setpicture] = useState(" ");
+
+  const uploadImage = async (e) => {
+    const file = e.target.files[0];
+    const base64 = await convertBase64(file);
+    setpicture(base64);
+  };
+  // const editImage = async (e) => {
+  //   const file = e.target.files[0];
+  //   const base64 = await convertBase64(file);
+  //   setRecord({ ...record, picture: base64 });
+  //   console.log(e.target.files.name, "wow");
+  // };
+
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -377,6 +406,8 @@ function QuizQuestion() {
               open={open}
               handleClickClose={handleClickClose}
               getdata={getData}
+              picture={picture}
+              uploadImage={uploadImage}
               questionTypes={questionType}
               questionCategories={questioncategory}
               quizheader={quizheader}

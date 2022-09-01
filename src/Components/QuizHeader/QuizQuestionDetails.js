@@ -30,6 +30,35 @@ function QuizQuestionDetails({ getAll, questions, headerId, setquestions }) {
 
   const [questionModel, setQuestionModel] = useState(false);
 
+  const [picture, setpicture] = useState(" ");
+
+  const uploadImage = async (e) => {
+    const file = e.target.files[0];
+    const base64 = await convertBase64(file);
+    setpicture(base64);
+  };
+  // const editImage = async (e) => {
+  //   const file = e.target.files[0];
+  //   const base64 = await convertBase64(file);
+  //   setRecord({ ...record, picture: base64 });
+  //   console.log(e.target.files.name, "wow");
+  // };
+
+  const convertBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const fileReader = new FileReader();
+      fileReader.readAsDataURL(file);
+
+      fileReader.onload = () => {
+        resolve(fileReader.result);
+      };
+
+      fileReader.onerror = (error) => {
+        reject(error);
+      };
+    });
+  };
+
   const coverAddOpen = () => {
     setQuestionModel(true);
   };
@@ -186,6 +215,8 @@ function QuizQuestionDetails({ getAll, questions, headerId, setquestions }) {
           <div className="container">
             <QuizQuestionAdd
               open1={questionModel}
+              picture={picture}
+              uploadImage={uploadImage}
               headerId={headerId}
               close1={questionAddClose}
               setquizheader={setquizheader}
